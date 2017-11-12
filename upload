@@ -1,0 +1,1 @@
+sudo ./hardware/tools/avr/bin/avrdude -v -patmega328p -Uflash:w:../grbl/grbl.hex:i -D -b 115200 -P /dev/ttyACM0 -C hardware/tools/avr/etc/avrdude.conf -c arduino 
