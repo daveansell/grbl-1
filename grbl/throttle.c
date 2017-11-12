@@ -1,21 +1,19 @@
-#include "throttle.h"
-#include "system.h"
-
+#include "grbl.h"
 
 // setup ADC on ADC5
 
 void throttle_init(){
   // clear ADLAR in ADMUX (0x7C) to right-adjust the result
   // ADCL will contain lower 8 bits, ADCH upper 2 (in last two bits)
-  ADMUX &= B11011111;
+  ADMUX &= 0b11011111;
  
   // Set REFS1..0 in ADMUX (0x7C) to change reference voltage to the
   // proper source (01)
-  ADMUX |= B01000000;
+  ADMUX |= 0b01000000;
  
   // Clear MUX3..0 in ADMUX (0x7C) in preparation for setting the analog
   // input
-  ADMUX &= B11110000;
+  ADMUX &= 0b11110000;
  
   // Set MUX3..0 in ADMUX (0x7C) to read from AD8 (Internal temp)
   // Do not set above 15! You will overrun other parts of ADMUX. A full
@@ -27,23 +25,23 @@ void throttle_init(){
  
   // Set ADEN in ADCSRA (0x7A) to enable the ADC.
   // Note, this instruction takes 12 ADC clocks to execute
-  ADCSRA |= B10000000;
+  ADCSRA |= 0b10000000;
  
   // Set ADATE in ADCSRA (0x7A) to enable auto-triggering.
-  ADCSRA |= B00100000;
+  ADCSRA |= 0b00100000;
  
   // Clear ADTS2..0 in ADCSRB (0x7B) to set trigger mode to free running.
   // This means that as soon as an ADC has finished, the next will be
   // immediately started.
-  ADCSRB &= B11111000;
+  ADCSRB &= 0b11111000;
  
   // Set the Prescaler to 128 (16000KHz/128 = 125KHz)
   // Above 200KHz 10-bit results are not reliable.
-  ADCSRA |= B00000111;
+  ADCSRA |= 0b00000111;
  
   // Set ADIE in ADCSRA (0x7A) to enable the ADC interrupt.
   // Without this, the internal interrupt will not trigger.
-  ADCSRA |= B00001000;
+  ADCSRA |= 0b00001000;
  
   // Enable global interrupts
   // AVR macro included in <avr/interrupts.h>, which the Arduino IDE
@@ -51,20 +49,21 @@ void throttle_init(){
  // sei();
  
   // Kick off the first ADC
-  readFlag = 0;
+  ADCreadFlag = 0;
+  throttleValue = 0;
   // Set ADSC in ADCSRA (0x7A) to start the ADC conversion
-  ADCSRA |=B01000000;
+  ADCSRA |=0b01000000;
 }
 
 // ISR for ADC return
 
-void ISR(ADC_vect){
+ISR(ADC_vect){
 
   // Done reading
-  readFlag = 1;
+  ADCreadFlag = 1;
  
   // Must read low first
-  int throttleValue = ADCL | (ADCH << 8);
+  throttleValue = ADCL | (ADCH << 8);
   
   // Not needed because free-running mode is enabled.
   // Set ADSC in ADCSRA (0x7A) to start another ADC conversion

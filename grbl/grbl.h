@@ -61,6 +61,8 @@
 #include "stepper.h"
 #include "jog.h"
 
+#include "throttle.h"
+
 // ---------------------------------------------------------------------------------------
 // COMPILE-TIME ERROR CHECKING OF DEFINE VALUES:
 

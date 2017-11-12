@@ -150,7 +150,10 @@ void protocol_main_loop()
 
       }
     }
-
+    // Dave - if ADC has read reset f_override
+    if(ADCreadFlag){
+	sys.f_override = min(100,throttleValue /10);
+    }
     // If there are no more characters in the serial read buffer to be processed and executed,
     // this indicates that g-code streaming has either filled the planner buffer or has
     // completed. In either case, auto-cycle start, if enabled, any queued moves.
