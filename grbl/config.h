@@ -612,6 +612,7 @@
 #define RPM_LINE_B4  1.151360e+03
 
 
+
 /* ---------------------------------------------------------------------------------------
    OEM Single File Configuration Option
 
@@ -625,5 +626,6 @@
 
 // Paste default settings definitions here.
 
+#define DO_SOFT_AXES 1 // bitfield which controls if soft axes are enabled for each axis.where first bit is X-axis etc 
 
 #endif
